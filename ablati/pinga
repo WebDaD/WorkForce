@@ -55,10 +55,11 @@ sub help
 	exit 0;
 }
 
-my $dieNow        = 0;
-my $pidFilePath   = "/var/run/";
-my $pidFile       = $pidFilePath . $angelName . ".pid";
+my $dieNow		= 0;
 my $pidfile;
+my $sub_pid;
+my $client 		= {};
+my $temppid;
 
 main();
 exit;
@@ -67,12 +68,14 @@ exit;
 # Main
 #----------------------------------------------------------------------------
 
+# TODO: contents of this into ablatus.pm http://www.tutorialspoint.com/perl/perl_oo_perl.htm
+
 sub main
 {
 	# TODO: if configfile -> parse and override $option
 	
 	if($option->{debug} ne 1){
-		daemonize();
+		$pidfile = init();
 	}
 	
 	until ($dieNow) {
@@ -90,70 +93,85 @@ sub main
 		die "cannot create socket $!\n" unless $socket;
 		dplog("server waiting for client connection on port 7777");
 		
-		while(1)
-		{
+		while(1){
 		    # waiting for a new client connection
 		    my $client_socket = $socket->accept();
 		 
 		    # get information about a newly connected client
-		    my $client_address = $client_socket->peerhost();
-		    my $client_port = $client_socket->peerport();
-		    dplog("connection from $client_address:$client_port");
+		    $client->{address} = $client_socket->peerhost();
+		    $client->{port} = $client_socket->peerport();
+		    dplog("connection from $client->{address}:$client->{port}");
 		 
-		 	# TODO: fork here again!
-		 
-		    # read up to 10240 characters from the connected client
-		    my $data = "";
-		    $client_socket->recv($data, $option->{maxdata});
-		 
-		 	my $json        = JSON->new->utf8;
- 			my $rem_json = $json->decode( $data );
-
-		 
-		 	my $answer = {};
-		 	$answer->{sender}->{address}= "127.0.0.1";
-			$answer->{sender}->{port}= $option->{port};
-			$answer->{sender}->{name}= $angelName;
-			
-			$answer->{receiver}->{address}= $client_address;
-			$answer->{receiver}->{port}= $client_port;
-			$answer->{receiver}->{name}= $rem_json->{sender}->{name};
-			
-			$answer->{command}->{name}= $rem_json->{command}->{name};
-			$answer->{command}->{arguments}= $rem_json->{command}->{arguments};
-			
-			
-		 
-		 	# TODO: check if correct receiver (multiple ports...) AND sender (prevent hacking) (only in strictmode)
-		 
-		 	# TODO: if command == help -> return all commands
-		 
-		 	if($rem_json->{command}->{name} ne "ping"){
-		 		$answer->{answer}->{text}= "Command ".$rem_json->{command}->{name}." not supported";
-				$answer->{answer}->{code}= 99;
-		 	}else {	
-			 	my $p = Net::Ping->new();
-			 	my $text = "";
-			 	my $code=0;
-			 	if($p->ping($rem_json->{command}->{arguments})){
-			 		$answer->{answer}->{text}= $rem_json->{command}->{arguments}." is alive";
-					$answer->{answer}->{code}= 0;
-			 	} else {
-			 		$answer->{answer}->{text}= $rem_json->{command}->{arguments}." is not reachable";
-					$answer->{answer}->{code}= 1;
-			 	}
-		   		$p->close();
+		 	my $sub_pid = fork();
+		 	if($sub_pid){
+		 		#parent
+		 		dplog("Forked with pid ".$sub_pid);
+		 		$temppid = $sub_pid;
 		 	}
-		 
-		 	$answer->{timestamp}= strftime("%Y-%m-%dT%H:%M:%S", localtime(time()));
-		 
-		    # write response data to the connected client
-		    $client_socket->send( $json->utf8->encode( $answer ));
-		 
-		    # notify client that response has been sent
-		    shutdown($client_socket, 1);
+		 	elsif($sub_pid == 0){
+			 	dplog("Created Fork");
+			    # read up to 10240 characters from the connected client
+			    my $data = "";
+			    $client_socket->recv($data, $option->{maxdata});
+			 
+			 	my $json        = JSON->new->utf8;
+	 			my $rem_json = $json->decode( $data );
+	
+			 
+			 	my $answer = {};
+			 	$answer->{sender}->{address}= "127.0.0.1";
+				$answer->{sender}->{port}= $option->{port};
+				$answer->{sender}->{name}= $angelName;
+				
+				$answer->{receiver}->{address}= $client->{address};
+				$answer->{receiver}->{port}= $client->{port};
+				$answer->{receiver}->{name}= $rem_json->{sender}->{name};
+				
+				$answer->{command}->{name}= $rem_json->{command}->{name};
+				$answer->{command}->{type}= $rem_json->{command}->{type};
+				$answer->{command}->{arguments}= $rem_json->{command}->{arguments};
+				
+				$answer->{answer}->{type}= "string";
+			 
+			 	# TODO: all this into subs -> then into Ablatus.pm (instructions on new ablati: import or copy)
+			 	# TODO: check if correct receiver (multiple ports...) AND sender (prevent hacking) (only in strictmode)
+			 
+			 	# TODO: common_commands
+			 
+			 	if($rem_json->{command}->{name} ne "ping"){
+			 		$answer->{answer}->{content}= "Command ".$rem_json->{command}->{name}." not supported";
+					$answer->{answer}->{code}= 99;
+			 	}else {	
+				 	my $p = Net::Ping->new();
+				 	my $text = "";
+				 	my $code=0;
+				 	if($p->ping($rem_json->{command}->{arguments})){
+				 		$answer->{answer}->{content}= $rem_json->{command}->{arguments}." is alive";
+						$answer->{answer}->{code}= 0;
+				 	} else {
+				 		$answer->{answer}->{content}= $rem_json->{command}->{arguments}." is not reachable";
+						$answer->{answer}->{code}= 1;
+				 	}
+			   		$p->close();
+			 	}
+			 
+			 	$answer->{timestamp}= getTimeStamp();
+			 
+			    # write response data to the connected client
+			    $client_socket->send( $json->utf8->encode( $answer ));
+			 
+			    # notify client that response has been sent
+			    shutdown($client_socket, 1);
+			    
+			    dplog("Fork finished.");
+			    #exit child
+			    exit 0;
+		 	} else{
+		 		#TODO error
+		 	}
+        	my $tmp = waitpid($temppid, 0);
+         	dplog("done with pid $tmp");
 		}
-		 
 		$socket->close();
 	}
 	$pidfile->remove if defined $pidfile;
@@ -162,7 +180,12 @@ sub main
 #----------------------------------------------------------------------------
 # Subs
 #----------------------------------------------------------------------------
-sub daemonize{
+sub action{
+	# TODO: this is the action. it will override the action  sub from abltaus.pm
+}
+sub init{
+	my $pidFilePath   = "/var/run/";
+	my $pidFile       = $pidFilePath . $angelName . ".pid";
 	use POSIX qw(setsid);
 	chdir '/';
 	umask 0;
@@ -174,7 +197,8 @@ sub daemonize{
 	POSIX::setsid() or die "Can't start a new session.";
 	$SIG{INT} = $SIG{TERM} = $SIG{HUP} = \&signalHandler;
 	$SIG{PIPE} = 'ignore';
-	$pidfile = File::Pid->new( { file => $pidFile, } );
+	my $pidfile = File::Pid->new( { file => $pidFile, } );
+	return $pidfile;
 }
 sub signalHandler {
 	$dieNow = 1;    # this will cause the "infinite loop" to exit
@@ -182,6 +206,9 @@ sub signalHandler {
 sub dplog ($) {
 	my $text = shift;
 	if($option->{debug} ne 0){
-		print strftime("%Y-%m-%dT%H:%M:%S", localtime(time())).": ".$text."\n";
+		print getTimeStamp().": ".$text."\n";
 	}
+}
+sub getTimeStamp{
+	return strftime("%Y-%m-%dT%H:%M:%S", localtime(time()));
 }

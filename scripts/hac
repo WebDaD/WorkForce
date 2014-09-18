@@ -31,6 +31,7 @@ my $option =	# option defaults
 	maxlength	=> 10240,
 	command		=> '',
 	arguments	=> '',
+	type		=> '',
 };
 Getopt::Long::Parser->new()->getoptions
 (
@@ -42,7 +43,8 @@ Getopt::Long::Parser->new()->getoptions
 	'targetport=i',
 	'maxlength=i',
 	'command=s',
-	'arguments=s'
+	'arguments=s',
+	'type=s'
 );
 
 sub help
@@ -85,8 +87,8 @@ sub main
 	$msg->{sender}->{name}= $self;
 	$msg->{receiver}->{address}= $option->{targetip};
 	$msg->{receiver}->{port}= $option->{targetport};
-	$msg->{receiver}->{name}= "pinga"; # TODO: not needed
 	$msg->{command}->{name}= $option->{command};
+	$msg->{command}->{type}= $option->{type};
 	$msg->{command}->{arguments}= $option->{arguments};
 	$msg->{timestamp}= strftime("%Y-%m-%dT%H:%M:%S", localtime(time()));
 	 

@@ -3,10 +3,10 @@
 this is the list if angels and what the do. also we have the list of commands
 
 Types of ablati:
-- Sensors (like ping)
-- Watchers (like filewatch)
+- Sensors (like ping) -> sentire
+- Watchers (like filewatch) -> providens
  These watch a specific thing and send an Event to all configured targets (json). They have a command allowing to subscribe to this watcher and a command to return the events.
-- Executors (like mail)
+- Executors (like mail) -> exsecutivam
 
 
 ## pinga
