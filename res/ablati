@@ -1,0 +1,43 @@
+# ablati
+
+this is the list if angels and what the do. also we have the list of commands
+
+Types of ablati:
+- Sensors (like ping)
+- Watchers (like filewatch)
+ These watch a specific thing and send an Event to all configured targets (json). They have a command allowing to subscribe to this watcher and a command to return the events.
+- Executors (like mail)
+
+
+## pinga
+
+this one just sends a ping and returns ok or not
+
+### commands
+- ping
+
+
+## intercoma
+
+this one nows all ablati (by Configuration) and will redirect messages to the correct target by name. it also can return the target of any ablati and a list of connected ones. it takes a msg and reads the command. based on this it will select a ablatus and send the msg to it.
+It also can distribute events, so a ablatus can just subscribe to a specific event here, the intercoma will then subscribe (if not already) and add the ablatus to its own distribution list.
+
+### commands
+- list
+- getAddress
+
+## tunnela
+
+Takes a Msg, rewrites the receiver to another tunnela (configure) and writes the receiver into the command. then it opens a tcp conntection and sends the message. the other tunnel reads the msg, gets the original msg, replaces the sender and performs. reads the answer and sends it back to the original tunnela. this reads the msg, replaces the sender and returns the value to the original sender.
+
+### commands
+- getPartner
+
+## alivea
+
+It watches over multiple targets (by config) and pings them every CONFIG seconds. if the status changes and stays CONFIG times, an event "host-up|down" is sent.
+
+### commands
+- subscribe(event)
+- getEvents
+

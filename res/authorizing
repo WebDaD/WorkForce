@@ -1,0 +1,5 @@
+# authorizing
+
+We need a way to allow only authorized messages to change the config. The sender must implement it as well as all ablati.
+
+But how?

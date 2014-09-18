@@ -1,0 +1,12 @@
+common commands
+
+these commands must be supported by all angels
+
+commands 	-> send list of commands (returns a json)
+name		-> send name (returns a string)
+status		-> send status (returns a string)
+identify	-> send name, ip, port (returns a json)
+config		-> change internal configuration (returns a json with old and new values)
+getconfig	-> send full config (returns a json)
+getconfigkeys	-> send all keys to configure (returns a json)
+getconfigvalue	-> send value for given key (returns a string)

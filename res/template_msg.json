@@ -1,0 +1,28 @@
+{
+	"sender":{
+		"address":"127.0.0.1",
+		"port":7777
+		"name":"hac"
+	},
+	"receiver":{
+		"address":"10.14.63.111",
+		"port":7778
+		"name":"pinga"
+	},
+	"command":{
+		"name":"ping",
+		"type":"string",
+		"arguments":"fh-hfv-app01"
+	}
+	"answer":{
+		"type":"string",
+		"content":"OK",
+		"code":0
+	},
+	"event":{
+		"name":"file_changed",
+		"type":"string",
+		"content":"File xy has been created."
+	},
+	"timestamp":"2014-09-17T14:34:23"
+}
