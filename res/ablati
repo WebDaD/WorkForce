@@ -41,3 +41,41 @@ It watches over multiple targets (by config) and pings them every CONFIG seconds
 - subscribe(event)
 - getEvents
 
+## healtha
+
+Will check a system for its health. may check on running services, growing files, etc ...
+
+## scana
+
+Will perform a check on a subnet using pinga, lookupa and porta
+
+## lookupa
+
+Will get a Hostname from an IP-Adress
+
+## porta
+
+Will use nmap to check for open ports
+
+## weba
+
+Will return a HTML-Page with the Last Message or a List of Events from a watcher
+
+## loga
+
+Will write incoming messages into a logfile
+
+## mysqla
+
+Will write incoming messages into a database. should be properly configured to correctly parse the messages
+
+## foldera
+
+Watches for Changes in a Folder
+
+## tracea
+
+Will Receive multiple messages and create a sort of ticket-flow with time-check etc. Results are sent as Event. We need to define start and stop of Chains
+
+
+
