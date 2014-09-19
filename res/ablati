@@ -77,8 +77,12 @@ Watches for Changes in a Folder
 
 Will Receive multiple messages and create a sort of ticket-flow with time-check etc. Results are sent as Event. We need to define start and stop of Chains
 
-##loadbala
+## loadbala
 
 Will listen on a port and know at least two targets listening on the same command. Will then internally switch between the targets.
 Also has a timeout on a target and will try the next one in case of a timeout (failover)
 
+## linka
+
+This is the glue between a passive sensor and an executor. It will subscribe to the events and activate the executor (based on Answer-code)
+It has an optional "next" target config, where its messages ca be sent
