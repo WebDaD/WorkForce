@@ -4,8 +4,7 @@ this is the list if angels and what the do. also we have the list of commands
 
 Types of ablati:
 - Sensors (like ping) -> sentire
-- Watchers (like filewatch) -> providens
- These watch a specific thing and send an Event to all configured targets (json). They have a command allowing to subscribe to this watcher and a command to return the events.
+ These watch a specific thing or may be triggered to check now and send an Event to all configured targets (json). They have a command allowing to subscribe to this watcher and a command to return the events.
 - Executors (like mail) -> exsecutivam
 
 
@@ -86,3 +85,23 @@ Also has a timeout on a target and will try the next one in case of a timeout (f
 
 This is the glue between a passive sensor and an executor. It will subscribe to the events and activate the executor (based on Answer-code)
 It has an optional "next" target config, where its messages ca be sent
+
+## Collecta
+
+Gets Information from an api or a weblink and returns an event. triggerable or timed.
+
+## sniffa 
+
+listens for element on net port... 
+
+## netscana
+
+Will scan a subnet
+
+## scana 
+
+Will scan an ip-Adress via wmi,ssh (or both) and return the results.
+
+## launcha
+
+Starts shellscripts or progs
