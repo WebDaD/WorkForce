@@ -10,3 +10,7 @@ config		-> change internal configuration (returns a json with old and new values
 getconfig	-> send full config (returns a json)
 getconfigkeys	-> send all keys to configure (returns a json)
 getconfigvalue	-> send value for given key (returns a string)
+commit -> Save config to file
+start -> starts ablatus
+stop -> stops
+restart -> stop,start
