@@ -1,14 +1,4 @@
-this is about combining watchers and other ablati to create workflows with chains
+this is about combining workers to create workflows with chains
 
-- A watcher send a message
-- A subscribed ablati receives and does something. Where does this message go? 
-
-I guess there should be an ablatus called chaina:
-
-A Chain is:
-- A1: Event
-- C: Notifiy A2
-- A2: perform, notify C
-- C: do something, like its an Event
-
-The chaina can have multiple chains, as it will fork for every new chain.
+- An Event is sent by a worker
+- A subscribed worker receives and does something. Where does this message go? 

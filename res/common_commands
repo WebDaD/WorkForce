@@ -1,6 +1,6 @@
-common commands
+# common commands
 
-these commands must be supported by all angels
+these commands must be supported by all workers
 
 commands 	-> send list of commands (returns a json)
 name		-> send name (returns a string)

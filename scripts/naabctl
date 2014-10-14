@@ -1,2 +1,0 @@
-# this is a perl skript witch takes: an ablatus (ip,port,name) and a command: status | start | stop | restart
-#  it returns an exitcode and a resulting text

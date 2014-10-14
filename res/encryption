@@ -1,5 +1,5 @@
 # encyrption
 
-We want to encrypt all messages, so an encrypt/decyrpt will be in the ablatus.pm
+We want to encrypt all messages, so an encrypt/decyrpt will be in the Worker.pm
 
 What encyrption method do we use?

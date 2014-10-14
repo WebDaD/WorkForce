@@ -7,17 +7,12 @@
 	"receiver":{
 		"address":"10.14.63.111",
 		"port":7778
-		"name":"pinga"
+		"name":"pingw"
 	},
 	"command":{
 		"name":"ping",
 		"type":"string",
 		"arguments":"fh-hfv-app01"
-	}
-	"answer":{
-		"type":"string",
-		"content":"OK",
-		"code":0
 	},
 	"event":{
 		"name":"file_changed",
