@@ -10,8 +10,6 @@ Categories:
 - WorkStarter -> They start something
 - Communicator -> Used to purly fiddle with messages
 
-
-
 ## pingw
 
 this one just sends a ping and returns ok or not
@@ -102,3 +100,12 @@ Will scan a subnet
 ## launchw
 
 Starts shellscripts or progs
+
+## configloadw
+
+Takes a special config-file that contains configs for multiple workers. This allows for a single config file.
+It will take a Command called distributeConfig and sent Events to the calling worker after every step.
+
+## splitw
+
+Gets Events and sends to them to n other workers
