@@ -1,0 +1,116 @@
+#!/usr/bin/perl -w
+#
+# Human Worker Control (Part of WorkForce)
+#
+# Dominik Sigmund, 2014-09-17
+#
+
+use utf8;
+use strict;
+use Getopt::Long ();
+
+use IO::Socket::INET;
+use JSON;
+use Data::Dumper;
+use POSIX qw(strftime);
+
+my $VERSION = '0.01';
+
+my ($path, $self) = $0 =~ /(.*\/)([^\/]*$)/;
+my ($user, $home) = (getpwuid($<))[0,7];
+my $host = `uname -n`; chop($host); $host =~ s/\..*//;
+binmode(STDOUT, ':utf8') or die "can't set binmode utf8 for STDOUT': $!";
+
+my $option =	# option defaults
+{
+	debug		=> 0,
+	help		=> 0,
+	version		=> 0,
+	targetip	=> '',
+	targetport	=> 0,
+	maxlength	=> 10240,
+	command		=> '',
+	arguments	=> '',
+	type		=> '',
+};
+Getopt::Long::Parser->new()->getoptions
+(
+	$option,
+	'debug+',
+	'help|?'	=> sub { help() },
+	'version'	=> sub { print "$self - Version: $VERSION\n"; exit 0; },
+	'targetip=s',
+	'targetport=i',
+	'maxlength=i',
+	'command=s',
+	'arguments=s',
+	'type=s'
+);
+
+sub help
+{
+	#TODO: print commandline
+	exit 0;
+}
+
+
+main();
+exit;
+
+#----------------------------------------------------------------------------
+# Main
+#----------------------------------------------------------------------------
+
+sub main
+{
+	# TODO: die with help if settings not there
+	
+	my $json = JSON->new->allow_nonref;
+	
+	
+	
+	# auto-flush on socket
+	$| = 1;
+	 
+	# create a connecting socket
+	my $socket = new IO::Socket::INET (
+	    PeerHost => $option->{targetip},
+	    PeerPort => $option->{targetport},
+	    Proto => 'tcp',
+	);
+	die "cannot connect to the server $!\n" unless $socket;
+	print "connected to the server\n";
+	 
+	my $msg = {}; 
+	$msg->{sender}->{address}=$socket->sockhost;
+	$msg->{sender}->{port}= $socket->sockport;
+	$msg->{sender}->{name}= $self;
+	$msg->{receiver}->{address}= $option->{targetip};
+	$msg->{receiver}->{port}= $option->{targetport};
+	$msg->{command}->{name}= $option->{command};
+	$msg->{command}->{type}= $option->{type};
+	$msg->{command}->{arguments}= $option->{arguments};
+	$msg->{timestamp}= strftime("%Y-%m-%dT%H:%M:%S", localtime(time()));
+	 
+	# data to send to a server
+	my $req = to_json($msg);
+	my $size = $socket->send($req);
+	print "sent data of length $size\n";
+	 
+	 
+	# notify server that request has been sent
+	shutdown($socket, 1);
+	 
+	# receive a response of up to 10240 characters from server
+	my $response = "";
+	$socket->recv($response, 10240);
+	print "received response:\n";
+	print Dumper($json->decode( $response ));
+
+	 
+	$socket->close();
+}
+
+#----------------------------------------------------------------------------
+# Methods
+#----------------------------------------------------------------------------

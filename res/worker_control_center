@@ -1,0 +1,16 @@
+# Worker Command Center 
+
+It shall be called SuperVisor
+
+This is a piece of Software, based on node.js and mongoDB.
+It allows full Control over a net of workers.
+
+The Database holds the workers with their config, the gui allows to enter them manually.
+Also you may enter an intercoma and use this to get workers from this one.
+
+The Gui allows to
+- Get the Status
+- Reconfigure
+- Show the Topographs
+- Stop, Start, Restart Workers
+- Try to get a Worker by using "identify" on an ip and port

@@ -1,0 +1,104 @@
+# workers
+
+this is the list if workers and what the do. also we have the list of commands
+
+Workers can be put into categories, but every worker may do everything.
+
+Categories:
+- DirectAction -> Only sends an event after receiving a command
+- WatchDogs -> They send events on particular things they watch
+- WorkStarter -> They start something
+- Communicator -> Used to purly fiddle with messages
+
+
+
+## pingw
+
+this one just sends a ping and returns ok or not
+
+### commands
+- ping
+
+
+## intercomw
+
+this one nows all workers (by Configuration) and will redirect messages to the correct target by name. it also can return the target of any worker and a list of connected ones. it takes a msg and reads the command. based on this it will select a worker and send the msg to it.
+It also can distribute events, so a worker can just subscribe to a specific event here, the intercoma will then subscribe (if not already) and add the worker to its own distribution list.
+
+### commands
+- list
+- getAddress
+
+## tunnelw
+
+Takes a Msg, rewrites the receiver to another tunnelw (configure) and writes the receiver into the command. then it opens a tcp conntection and sends the message. the other tunnel reads the msg, gets the original msg, replaces the sender and performs. reads the answer and sends it back to the original tunnelw. this reads the msg, replaces the sender and returns the value to the original sender.
+
+### commands
+- getPartner
+
+## alivew
+
+It watches over multiple targets (by config) and pings them every CONFIG seconds. if the status changes and stays CONFIG times, an event "host-up|down" is sent.
+
+### commands
+- subscribe(event)
+- getEvents
+
+## healthw
+
+Will check a system for its health. may check on running services, growing files, etc ...
+
+## scanw
+
+Will perform a check on a subnet using pingw, lookupw and portw
+
+## lookupw
+
+Will get a Hostname from an IP-Adress
+
+## portw
+
+Will use nmap to check for open ports
+
+## webw
+
+Will return a HTML-Page with the Last Message or a List of Events from a watcher
+
+## logw
+
+Will write incoming messages into a logfile
+
+## mysqlw
+
+Will write incoming messages into a database. should be properly configured to correctly parse the messages
+
+## folderw
+
+Watches for Changes in a Folder
+
+## tracew
+
+Will Receive multiple messages and create a sort of ticket-flow with time-check etc. Results are sent as Event. We need to define start and stop of Chains
+
+## loadbalw
+
+Will listen on a port and know at least two targets listening on the same command. Will then internally switch between the targets.
+Also has a timeout on a target and will try the next one in case of a timeout (failover)
+
+
+## Collectw
+
+Gets Information from an api or a weblink and returns an event. triggerable or timed.
+
+## sniffw 
+
+listens for element on net port... 
+
+## netscanw
+
+Will scan a subnet
+
+
+## launchw
+
+Starts shellscripts or progs
