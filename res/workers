@@ -109,3 +109,8 @@ It will take a Command called distributeConfig and sent Events to the calling wo
 ## splitw
 
 Gets Events and sends to them to n other workers
+
+## discoverw
+is configured to know workers in the same segment by port.
+Can be asked to return this list.
+Can also discover other discoverw or its own segment(details)
